@@ -2,28 +2,40 @@ import itertools
 import time
 import sys
 
-password  = input("Enter a password: ")
-chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-length =  10 
-max_time = 60 
-start_time = time.time()
+def crack_password(password, length, max_time):
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    start_time = time.time()
 
-for n in range(1, length+1):
-    for test in itertools.product(chars, repeat=n):
-        test = "". join(test)
-        if test == password:
-            print("Password cracked! The password you have input is: ", test)
-            sys.exit()
-        
-        elapsed_time = time.time() - start_time
-        if elapsed_time > max_time:
-            print("Time limit exceeded.")
-            time.sleep(2)
-            sys.exit
+    for n in range(1, length+1):
+        for test in itertools.product(chars, repeat=n):
+            test = "".join(test)
+            if test == password:
+                return test
 
-        progress = n / length * 100
-        sys.stdout.write('\r')
-        sys.stdout.write("[%-100s] %d%%" % ('=' * int(progress), progress))
-        sys.stdout.flush()
+            elapsed_time = time.time() - start_time
+            if elapsed_time > max_time:
+                return None
 
-print("\nPassword not found.")
+            progress = n / length * 100
+            sys.stdout.write('\r')
+            sys.stdout.write("[%-100s] %d%%" % ('=' * int(progress), progress))
+            sys.stdout.flush()
+
+    return None
+
+
+def main():
+    password = input("Enter a password: ")
+    length = 10
+    max_time = 60
+
+    cracked_password = crack_password(password, length, max_time)
+
+    if cracked_password:
+        print("\nPassword cracked! The password you entered is:", cracked_password)
+    else:
+        print("\nPassword not found within the time limit.")
+
+
+if __name__ == "__main__":
+    main()
